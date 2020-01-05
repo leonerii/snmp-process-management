@@ -1,0 +1,36 @@
+extends layout
+
+block content
+    .w3-card-4
+        header.w3-container.w3-teal
+            h1 Search For Processes on Host
+        form.w3-container(action="/" method="GET")
+            label IP
+            input.w3-input(type="text" name="ip")
+            label Port
+            input.w3-input(type="text" name="port")
+            input.w3-input(type="submit" value="Get Processes")
+    
+    .w3-card-4
+        header.w3-container.w3-teal
+            h1 Process List
+        .w3-container
+            if (process_list.length > 0)
+                table.w3-table-all
+                    tr
+                        th PID
+                        th Name
+                        th Type
+                        th 
+                    each proc in process_list
+                        tr
+                            td=proc['id']
+                            td=proc['name']
+                            td=proc['type']
+                            td 
+                                a(href="http://localhost:3000/realtime/?ip=" + host['ip'] + "&port=" + host['port'] + "&process=" + proc['id'] ) Details
+            else
+                p No process found
+                            
+    footer.w3-container.w3-teal(position='fixed')
+        address SNMP Process Management

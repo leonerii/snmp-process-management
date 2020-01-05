@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    .w3-card-4
+        header.w3-container.w3-teal
+            h1 Real Time Process Monitoring
+        
+        .w3-container
+            #chart
+            script
+                | var target = !{target_};
+                include real_time.js
+
+    footer.w3-container.w3-teal(position='fixed')
+        address SNMP Process Management
+
+            
+        
