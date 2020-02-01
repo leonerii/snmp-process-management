@@ -1,24 +1,35 @@
 var cpu_data = []
-var last_value = 0
+var mem_data = []
+var systime = []
+var cpu_last_value = 0
 var interval = 5000
 var cores = 1
+var memory = 1
 
 console.log(target)
 
-function get_cpu_data(qs){
+function get_process_data(qs){
     axios.get('http://127.0.0.1:3000/api/cpu/' + qs,
         {'headers': 
             {'Content-Type': 'application/json'}
         })
         .then(data => {
-            if(last_value){
-                var curr_value = data.data.value
-                var value = (curr_value - last_value)/(interval * cores)
-                cpu_data.push(value.toFixed(2) * 100)
-                last_value = curr_value
+            if(cpu_last_value){
+                var cpu_curr_value = data.data[0].value
+                var cpu_value = (cpu_curr_value - cpu_last_value)/(interval * cores)
+                cpu_data.push((cpu_value * 100).toFixed(2))
+                cpu_last_value = cpu_curr_value
             }
-            else
-                last_value = data.data.value
+            else{
+                cpu_last_value = data.data[0].value
+                cpu_data.push(0)
+            }
+        
+            var mem_curr_value = data.data[1].value * 0.00000095367432
+            var mem_value = mem_curr_value / memory
+            mem_data.push((mem_value * 100).toFixed(2))
+
+            systime.push(data.data[2].value)
         })
         .catch(err => {
             cpu_data.push(null)
@@ -32,6 +43,9 @@ var options = {
     series: [{
         name: "CPU Usage",
         data: cpu_data
+    },{
+        name: "Memory Usage",
+        data: mem_data
     }],
     chart: {
         height: 350,
@@ -65,7 +79,10 @@ var options = {
     },
     yaxis: {
         max: 100,
-        min: 0
+        min: 0,
+        title: {
+            text: "Percentage"
+        }
     },
     xaxis: {
         tickAmount: 40,
@@ -79,9 +96,13 @@ var chart = new ApexCharts(document.querySelector("#chart"), options);
 chart.render();
 
 window.setInterval(() => {
-    get_cpu_data(queryString)
+    get_process_data(queryString)
+    console.log(cpu_data)
+    console.log(mem_data)
     chart.updateSeries([{
         data: cpu_data
+    },{
+        data: mem_data
     }])
 },interval)
 

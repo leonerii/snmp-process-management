@@ -40,22 +40,26 @@ router.get('/process', (req, res) => {
 
 
 router.get('/cpu', (req, res) => {
-    var oid = "1.3.6.1.2.1.25.5.1.1.1." + req.query.process;
+    var oids = [
+        "1.3.6.1.2.1.25.5.1.1.1." + req.query.process,
+        "1.3.6.1.2.1.25.5.1.1.2." + req.query.process,
+        "1.3.6.1.2.1.1.3.0"
+    ]
 
     var session = snmp.createSession(req.query.ip, "public", {
         "version": snmp.Version2c,
         "port": req.query.port
     })
 
-    session.get([oid], (err, data) => {
+    session.get(oids, (err, data) => {
         if(!err){
             res.set('Content-Type', 'application/json')
             res.set('Access-Control-Allow-Origin', '*')
-            res.json(data[0])
-            console.log(data[0])
+            res.jsonp(data)
+            console.log(data)
         }
         else
-            res.json(err)
+            res.jsonp(err)
     })
 });
 
