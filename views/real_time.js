@@ -6,8 +6,6 @@ var interval = 5000
 var cores = 1
 var memory = 1
 
-console.log(target)
-
 function get_process_data(qs){
     axios.get('http://127.0.0.1:3000/api/cpu/' + qs,
         {'headers': 
@@ -97,12 +95,10 @@ chart.render();
 
 window.setInterval(() => {
     get_process_data(queryString)
-    console.log(cpu_data)
-    console.log(mem_data)
     chart.updateSeries([{
-        data: cpu_data
+        data: cpu_data.slice(Math.max(cpu_data.length - 30, 1))
     },{
-        data: mem_data
+        data: mem_data.slice(Math.max(mem_data.length - 30, 1))
     }])
 },interval)
 

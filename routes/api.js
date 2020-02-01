@@ -56,7 +56,6 @@ router.get('/cpu', (req, res) => {
             res.set('Content-Type', 'application/json')
             res.set('Access-Control-Allow-Origin', '*')
             res.jsonp(data)
-            console.log(data)
         }
         else
             res.jsonp(err)
