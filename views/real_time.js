@@ -27,7 +27,7 @@ function get_process_data(qs){
             var mem_value = mem_curr_value / memory
             mem_data.push((mem_value * 100).toFixed(2))
 
-            systime.push(data.data[2].value)
+            systime.push(data.data[2].value.toString())
         })
         .catch(err => {
             cpu_data.push(null)
@@ -83,9 +83,10 @@ var options = {
         }
     },
     xaxis: {
-        tickAmount: 40,
-        min:0,
-        max: 30,
+        categories: systime,
+        //tickAmount: 40,
+        //min:0,
+        //max: 30,
         range: 30
     }
 };
@@ -96,10 +97,16 @@ chart.render();
 window.setInterval(() => {
     get_process_data(queryString)
     chart.updateSeries([{
-        data: cpu_data.slice(Math.max(cpu_data.length - 30, 1))
+        data: cpu_data
+        //.slice(Math.max(cpu_data.length - 30, 1))
     },{
-        data: mem_data.slice(Math.max(mem_data.length - 30, 1))
+        data: mem_data
+        //.slice(Math.max(mem_data.length - 30, 1))
     }])
+
+    options.xaxis.categories = systime
+    chart.updateOptions(options)
+
 },interval)
 
 
